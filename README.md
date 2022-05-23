@@ -4,6 +4,7 @@
 
 - ```bash
   expo init rn-wallet
+  > blank (TypeScript)
   cd rn-wallet
   ```
 
@@ -32,3 +33,46 @@
   - `npm install -g expo-cli`
 
   - `expo --version` returned 5.4.6
+
+## Landing Page
+
+- ```
+  mkdir screens
+  mkdir components
+  yarn add styled-components
+  yarn add @types/styled-components @types/styled-components-react-native
+  ```
+
+### Create Shared Styles
+
+- Create `/components/colors.tsx`
+
+  - ```tsx
+    export const colors = {
+      white: '#fff',
+      primary: '#ef835d',
+      secondary: '#2c365a',
+      tertiary: '#85c6d8',
+      gray: '#d1d5db',
+      graylight: 'f3f4f6',
+      graydark: '#4b5563',
+      accent: '#fbcd77',
+    };
+    ```
+
+- Create `/components/shared.tsx`
+
+  - ```tsx
+    import { Dimensions } from 'react-native';
+    import styled from 'styled-components/native';
+    import { colors } from './colors';
+
+    export const Container = styled.View`
+      flex: 1;
+      align-items: center;
+      background-color: ${colors.white};
+    `;
+
+    export const ScreenWidth = Dimensions.get('screen').width;
+    export const ScreenHeight = Dimensions.get('screen').height;
+    ```
