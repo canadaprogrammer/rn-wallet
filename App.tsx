@@ -6,7 +6,10 @@ import {
   Lato_400Regular,
   Lato_700Bold,
 } from '@expo-google-fonts/lato';
-import Welcome from './screens/Welcome';
+// import Welcome from './screens/Welcome';
+
+// React Navigation
+import RootStack from './navigators/RootStack';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -44,6 +47,7 @@ export default function App() {
   }
 
   return (
-    <Welcome />
+    // <Welcome />
+    <RootStack />
   );
 };

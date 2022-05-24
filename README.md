@@ -426,3 +426,66 @@
         </BottomSection>
         ...
     ```
+
+## Initial React Navigation Setup with Typescript
+
+- Install React Navigation and Stack Navigator
+
+  - ```bash
+    yarn add @react-navigation/native
+    expo install react-native-screens react-native-safe-area-context
+    yarn add @react-navigation/stack
+    expo install react-native-gesture-handler
+    ```
+
+- create `/navigators/RootStack.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+
+    // React Navigation
+    import { NavigationContainer } from '@react-navigation/native';
+    import { createStackNavigator } from '@react-navigation/stack';
+
+    // screens
+    import Welcome from './../screens/Welcome';
+
+    export type RootStackParamList = {
+      Welcome: undefined;
+    };
+
+    const Stack = createStackNavigator<RootStackParamList>();
+
+    const RootStack: FunctionComponent = () => {
+      return (
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name='Welcome'
+              component={Welcome}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      );
+    };
+
+    export default RootStack;
+    ```
+
+- On App.tsx
+
+  - ```tsx
+    ...
+    // import Welcome from './screens/Welcome';
+
+    // React Navigation
+    import RootStack from './navigators/RootStack';
+
+    ...
+      return (
+        // <Welcome />
+        <RootStack />
+      );
+    };
+    ```
