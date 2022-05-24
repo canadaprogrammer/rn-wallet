@@ -235,3 +235,129 @@
 
       ...
     ```
+
+### Styling Text
+
+- Create `/components/Texts/SmallText.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+
+    // colors
+    import { colors } from '../colors';
+    const StyledTest = styled.Text`
+      font-size: 13px;
+      color: ${colors.gray};
+      text-align: left;
+      font-family: Lato-Regular;
+      // font-family: 'Lato_400Regular'; for using `@expo-google-fonts/lato`
+    `;
+
+    const SmallText: FunctionComponent = () => {
+      return <></>;
+    };
+
+    export default SmallText;
+    ```
+
+- Create `/components/Texts/types.tsx`
+
+  - ```tsx
+    import { ReactNode } from 'react';
+    import { StyleProp, TextStyle } from 'react-native';
+
+    export interface TextProps {
+      textStyles?: StyleProp<TextStyle>;
+      children: ReactNode;
+    }
+    ```
+
+- On `/components/Text/SmallText.tsx`
+
+  - ```tsx
+    ...
+    // types
+    import { TextProps } from './types';
+
+    const SmallText: FunctionComponent<TextProps> = (props) => {
+      return <StyledText style={props.textStyles}>{props.children}</StyledText>;
+    }
+
+    export default SmallText;
+    ```
+
+  - Error: `react.ReactNode' is not assignable to type 'import(...).ReactNode'`
+
+    - Added below code to `/package.json`
+
+      - ```json
+        "resolutions": {
+          "@types/react": "17.0.40"
+        }
+        ```
+
+    - And then Reload Window
+
+- Create `/components/Text/RegularText.tsx` and `/components/Text/BigText.tsx` as similar as `SmallText.tsx`
+
+  - On `BigText.tsx`
+
+    - ```tsx
+      ...
+
+      const StyledText = styled.Text`
+        font-size: 37px;
+        color: ${colors.white};
+        ...
+        font-family: Lato-Bold;
+      `;
+
+      ...
+
+      const BigText: FunctionComponent<TextProps> = (props) => {
+        ...
+      }
+
+      export default BigText;
+      ```
+
+  - On `RegularText.tsx`
+
+    - ```tsx
+      ...
+
+      const StyledText = styled.Text`
+        font-size: 15px;
+        color: ${colors.white};
+        ...
+        font-family: Lato-Bold;
+      `;
+
+      ...
+
+      const RegularText: FunctionComponent<TextProps> = (props) => {
+        ...
+      }
+
+      export default RegularText;
+      ```
+
+- On `/screens/Welcome.tsx`
+
+  - ```tsx
+    ...
+    import BigText from '../components/Texts/BigText';
+    import SmallText from '../components/Texts/SmallText';
+
+    ...
+        <BottomSection>
+          <BigText textStyles={{ width: "70%", marginBottom: 25}}>
+            Best way to track your money
+          </BigText>
+          <SmallText textStyles={{ width: "70%", marginBottom: 25}}>
+            Best payment method, connect your money to your friends, family.
+          </SmallText>
+        </BottomSection>
+    ...
+    ```
