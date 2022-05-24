@@ -53,6 +53,9 @@ const Welcome: FunctionComponent = () => {
           <SmallText textStyles={{ width: "70%", marginBottom: 25}}>
             Best payment method, connect your money to your friends, family.
           </SmallText>
+          <RegularButton onPress={() => {}}>
+            Get Started
+          </RegularButton>
         </BottomSection>
       </WelcomeContainer>
     </>
