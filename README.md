@@ -149,3 +149,89 @@
 
     export default Welcome;
     ```
+
+### Add Google Fonts
+
+#### Method 1: Use Google Fonts by Downloading
+
+- Download Google fonts
+
+  - `/assets/fonts/Lato-Bold.ttf` and `/assets/fonts/Lato-Regular.ttf`
+
+- To use the custom fonts, `expo install expo-font expo-splash-screen`
+
+- On `App.tsx`
+
+  - ```tsx
+    import React, {useEffect, useState} from 'react';
+    import * as SplashScreen from 'expo-splash-screen';
+    import Welcome from './screens/Welcome';
+    // custom font
+    import {useFonts} from 'expo-font';
+    ...
+    export default function App() {
+      const [appIsReady, setAppIsReady] = useState(false);
+
+      const [fontLoaded] = useFonts({
+        'Lato-Bold': require('./assets/fonts/Lato-Bold.ttf'),
+        'Lato-Regular': require('./assets/fonts/Lato-Regular.ttf'),
+      })
+
+      useEffect(() => {
+        async function prepare() {
+          try {
+            await SplashScreen.preventAutoHideAsync();
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          } catch(e) {
+            console.warn(e);
+          } finally {
+            setAppIsReady(true);
+          }
+        }
+        prepare();
+      },[]);
+
+      useEffect(() => {
+        const hideSplashScreen = async () => {
+          await SplashScreen.hideAsync();
+        }
+        if(fontLoaded && appIsReady) {
+          hideSplashScreen();
+        }
+      }, [appIsReady]);
+
+      if(!appIsReady) {
+        return null;
+      }
+
+      return (
+        <Welcome />
+      );
+    };
+    ```
+
+#### Method 2: Use `@expo-google-fonts` package
+
+- `expo install @expo-google-fonts/lato expo-font expo-splash-screen`
+
+- On `App.tsx`
+
+  - ```tsx
+    ...
+    // custom font
+    import {
+      useFonts,
+      Lato_400Regular,
+      Lato_700Bold,
+    } from '@expo-google-fonts/lato';
+
+    export default function App() {
+      const [appIsReady, setAppIsReady] = useState(false);
+
+      const [fontLoaded] = useFonts({
+        Lato_400Regular,
+        Lato_700Bold,
+      })
+
+      ...
+    ```
