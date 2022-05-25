@@ -489,3 +489,238 @@
       );
     };
     ```
+
+## Home Screen
+
+- Create `/screens/Home.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import { StatusBar } from 'expo-status-bar';
+    import styled from 'styled-components/native';
+
+    // custom components
+    import { colors } from '../components/colors';
+    import { Container } from '../components/shared';
+
+    const HomeContainer = styled(Container)`
+      background-color: ${colors.graylight};
+      width: 100%;
+      flex: 1;
+    `;
+
+    const Home: FunctionComponent = () => {
+      return (
+        <HomeContainer>
+          <StatusBar style='dark' />
+        </HomeContainer>
+      );
+    };
+
+    export default Home;
+    ```
+
+- On `/navigators/RootStack.tsx`
+
+  - ```tsx
+    ...
+    import Home from './../screens/Home';
+
+    // custom components
+    import {colors} from '../components/colors';
+
+    export type RootStackParamList = {
+      ...
+      Home: undefined;
+    };
+
+    ...
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: colors.graylight,
+              borderBottomWidth: 0,
+              shadowColor: "transparent",
+              shadowOpacity: 0,
+              elevation: 0,
+              height: 120,
+            },
+            headerTintColor: colors.secondary,
+          }}
+          initialRouteName="Home"
+        >
+          ...
+          <Stack.Screen name="Home" component={Home} />
+        ...
+    ```
+
+### Add Greeting Header
+
+- Create `/components/Header/Greeting.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+    import { StyleProp, TextStyle } from 'react-native';
+
+    // custom components
+    import { colors } from '../colors';
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+
+    const StyledView = styled.View`
+      flex-direction: column;
+      flex: 1;
+      justify-content: center;
+    `;
+
+    interface GreetingProps {
+      mainText: string;
+      subText: string;
+      mainTextStyles?: StyleProp<TextStyle>;
+      subTextStyles?: StyleProp<TextStyle>;
+    }
+    const Greeting: FunctionComponent<GreetingProps> = (props) => {
+      return (
+        <StyledView>
+          <RegularText
+            textStyles={[
+              {
+                color: colors.secondary,
+                fontSize: 22,
+              },
+              props.mainTextStyles,
+            ]}
+          >
+            {props.mainText}
+          </RegularText>
+          <SmallText
+            textStyles={[
+              {
+                color: colors.graydark,
+              },
+              props.subTextStyles,
+            ]}
+          >
+            {props.subText}
+          </SmallText>
+        </StyledView>
+      );
+    };
+
+    export default Greeting;
+    ```
+
+- On `/navigators/RootStack.tsx`
+
+  - ```tsx
+    ...
+    import Greeting from '../components/Header/Greeting';
+
+    ...
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerTitle: (props) => (
+            <Greeting
+              mainText="Hey!"
+              subText="Welcome Back"
+              {...props}
+            />
+          ),
+        }}
+      />
+      ...
+    ```
+
+### Add Profile Header
+
+- Create `/components/Header/Profile.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+    import {
+      ImageSourcePropType,
+      GestureResponderEvent,
+      StyleProp,
+      ViewStyle,
+      ImageStyle,
+    } from 'react-native';
+
+    const StyledView = styled.TouchableOpacity`
+      flex-direction: column,
+      height: 45px,
+      width: 45px;
+      border-radius: 15px;
+    `;
+
+    const StyledImage = styled.Image`
+      resize-mode: cover;
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+    `;
+
+    interface ProfileProps {
+      img: ImageSourcePropType;
+      imgStyle?: StyleProp<ImageStyle>;
+      imgContainerStyle?: StyleProp<ViewStyle>;
+      onPress?: ((event: GestureResponderEvent) => void) | undefined;
+    }
+
+    const Profile: FunctionComponent<ProfileProps> = (props) => {
+      return (
+        <StyledView onPress={props.onPress} style={props.imgContainerStyle}>
+          <StyledImage style={props.imgStyle} source={props.img} />
+        </StyledView>
+      );
+    };
+
+    export default Profile;
+    ```
+
+- On `/navigators/RootStack.tsx`
+
+  - ```tsx
+    ...
+    import Profile from '../components/Header/Profile';
+    import Avi from './../assets/avi/avatar.png';
+
+    ...
+        <Stack.Navigator
+          screenOptions={{
+            ...
+            headerRightContainerStyle: {
+              paddingRight: 25,
+            },
+            headerLeftContainerStyle: {
+              paddingLeft: 25,
+            },
+            headerRight: () => (
+              <Profile
+                img={Avi}
+                imgContainerStyle={{backgroundColor: colors.tertiary}}
+              />
+            ),
+          }}
+          initialRouteName="Home"
+        >
+          ...
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerLeft: (props) => (
+                <Greeting
+                  mainText="Hey!"
+                  subText="Welcome Back"
+                  {...props}
+                />
+              ),
+              headerTitle: () => <></>
+            }}
+          />
+        ...
+    ```
