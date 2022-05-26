@@ -724,3 +724,231 @@
           />
         ...
     ```
+
+## Cards Section
+
+- Create `/components/Cards/CardSection.tsx`
+
+  - ```tsx
+    import React, {FunctionComponent} from 'react';
+    import styled from 'styled-components/native';
+
+    // components
+    const CardList = styled.FlatList`
+      width: 100%;
+      flex: 1;
+      padding-left: 25px;
+      padding-bottom: 15px;
+    `;
+
+    const CardSection: FunctionComponent = () => {
+      return (
+
+      );
+    };
+
+    export default CardSection;
+    ```
+
+- Create `/components/Cards/types.tsx`
+
+  - ```tsx
+    import { ImageSourcePropType } from 'react-native';
+
+    export interface CardProps {
+      id: number;
+      accountNo: string;
+      balance: number;
+      alias?: string;
+      logo: ImageSourcePropType;
+    }
+
+    export interface CardSectionProps {
+      data: Array<CardProps>;
+    }
+    ```
+
+- On `/components/Cards/CardSection.tsx`
+
+  - ```tsx
+    ...
+
+    // types
+    import {CardSectionProps} from './types';
+
+    const CardSection: FunctionComponent<CardSectionProps> = (props) => {
+      return (
+        <CardList
+          data={props.data}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingRight: 25,
+            alignItems: "center",
+          }}
+          keyExtractor={({id}: any) => id.toString()}
+          renderItem={}
+        />
+      );
+    ...
+    ```
+
+- Create `/components/Cards/CardItem.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+
+    // components
+    import { ScreenWidth } from '../shared';
+    import { colors } from '../colors';
+
+    const CardBackground = styled.ImageBackground`
+      height: 75%;
+      width: ${ScreenWidth * 0.67}px;
+      resize-mode: cover;
+      background-color: ${colors.accent};
+      border-radius: 25px;
+      margin-right: 25px;
+      overflow: hidden;
+    `;
+
+    const CardTouchable = styled.TouchableHighlight`
+      height: 100%;
+      border-radius: 25px;
+    `;
+
+    const TouchableView = styled.View`
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px;
+      flex: 1;
+    `;
+
+    const CardRow = styled.View`
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    `;
+
+    const Logo = styled.Image`
+      width: 100%;
+      height: 80%;
+      resize-mode: contain;
+      flex: 1;
+    `;
+
+    // images
+    import card_bg from '../../assets/bgs/background_transparent.png';
+
+    // types
+    import { CardProps } from './types';
+
+    const CardItem: FunctionComponent<CardProps> = (props) => {
+      const handlePress = () => {};
+      return (
+        <CardBackground source={card_bg}>
+          <CardTouchable underlayColor={colors.secondary} onPress={handlePress}>
+            <TouchableView>
+              <CardRow></CardRow>
+              <CardRow></CardRow>
+            </TouchableView>
+          </CardTouchable>
+        </CardBackground>
+      );
+    };
+
+    export default CardItem;
+    ```
+
+- On `/components/Cards/CardSection.tsx`
+
+  - ```tsx
+    ...
+    // components
+    import CardItem from './CardItem';
+    ...
+
+    const CardSection: FunctionComponent<CardSectionProps> = (props) => {
+      return (
+        <CardList
+          ...
+          renderItem={({item}: any) => <CardItem {...item}/>}
+          ...
+    ```
+
+- On `/screens/Home.tsx`
+
+  - ```tsx
+    ...
+    import CardSection from '../components/Cards/CardSection';
+
+    ...
+    // images
+    import master_card from '../assets/cards/master_card.png';
+    import visa from '../assets/cards/visa.png';
+
+    const Home: FunctionComponent = () => {
+      const cardsData = [
+        {
+          id: 1,
+          accountNo: "111111111",
+          balance: 20000.50,
+          alias: "Work Debit",
+          logo: master_card,
+        },
+        {
+          id: 2,
+          accountNo: "111111112",
+          balance: 10000.20,
+          alias: "Personal Prepaid",
+          logo: visa,
+        },
+        {
+          id: 3,
+          accountNo: "111111113",
+          balance: 4000.00,
+          alias: "School Prepaid",
+          logo: visa,
+        }
+      ]
+      return (
+        <HomeContainer>
+          <StatusBar style="dark"/>
+          <CardSection data={cardsData} />
+        </HomeContainer>
+        ...
+    ```
+
+- On `/components/Cards/CardItem.tsx`
+
+  - ```tsx
+    import {View} from 'react-native';
+    ...
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+    ...
+
+          <CardRow>
+            <RegularText textStyles={{color: colors.black}}>
+              ****** {props.accountNo.slice(6,10)}
+            </RegularText>
+          </CardRow>
+          <CardRow>
+            <View style={{flex:3}}>
+              <SmallText
+                textStyles={{marginBottom: 5, color: colors.graydark}}
+              >
+                Total Balance
+              </SmallText>
+              <RegularText
+                textStyles={{fontSize: 19, color: colors.graydark}}
+              >
+                ${props.balance.toFixed(2)}
+              </RegularText>
+            </View>
+            <Logo source={props.logo} />
+          </CardRow>
+          ...
+    ```
