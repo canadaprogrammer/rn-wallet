@@ -26,7 +26,7 @@ const CardTouchable = styled.TouchableHighlight`
 const TouchableView = styled.View`
   justify-content: space-between;
   align-items: center;
-  padding: 30px;
+  padding: 15px;
   flex: 1;
 `;
 
@@ -64,7 +64,7 @@ const CardItem: FunctionComponent<CardProps> = (props) => {
           <CardRow>
             <View style={{flex:3}}>
               <SmallText
-                textStyles={{marginBottom: 5, color: colors.graydark}}
+                textStyles={{marginBottom: 1, color: colors.graydark}}
               >
                 Total Balance
               </SmallText>

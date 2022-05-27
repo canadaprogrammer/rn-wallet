@@ -725,7 +725,7 @@
         ...
     ```
 
-## Cards Section
+## Cards Section | Horizontal Scrollable List (FlatList)
 
 - Create `/components/Cards/CardSection.tsx`
 
@@ -821,7 +821,7 @@
     const TouchableView = styled.View`
       justify-content: space-between;
       align-items: center;
-      padding: 30px;
+      padding: 15px;
       flex: 1;
     `;
 
@@ -938,7 +938,7 @@
           <CardRow>
             <View style={{flex:3}}>
               <SmallText
-                textStyles={{marginBottom: 5, color: colors.graydark}}
+                textStyles={{marginBottom: 1, color: colors.graydark}}
               >
                 Total Balance
               </SmallText>
@@ -951,4 +951,256 @@
             <Logo source={props.logo} />
           </CardRow>
           ...
+    ```
+
+## Transaction Section | Vertical FlatList
+
+- Create `/components/Transactions/types.tsx`
+
+  - ```tsx
+    export interface TransactionProps {
+      id: number;
+      title: string;
+      subtitle: string;
+      amount: string;
+      date: string;
+      art: {
+        icon: string;
+        background: string;
+      };
+    }
+
+    export interface TransactionSectionProps {
+      data: Array<TransactionProps>;
+    }
+
+    export interface TransactionAviProps {
+      icon: any;
+      background: string;
+    }
+    ```
+
+- Create `/components/Transactions/TransactionSection.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+    import { Ionicons } from '@expo/vector-icons';
+    // colors
+    import { colors } from '../colors';
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+
+    const TransactionSectionBackground = styled.View`
+      width: 100%;
+      padding-horizontal: 25px;
+      padding-top: 5px;
+      flex: 2;
+    `;
+
+    const TransactionRow = styled.View`
+      flex-direction: row;
+      justify-content: space-between;
+      align-item: center;
+      width: 100%;
+    `;
+
+    const TransactionList = styled.FlatList`
+      width: 100%;
+    `;
+
+    // types
+    import { TransactionSectionProps } from './types';
+
+    const TransactionSection: FunctionComponent<TransactionSectionProps> = (
+      props
+    ) => {
+      return (
+        <TransactionSectionBackground>
+          <TransactionRow style={{ marginBottom: 25 }}>
+            <RegularText textStyles={{ fontSize: 19, color: colors.secondary }}>
+              Transaction
+            </RegularText>
+            <SmallText textStyles={{ color: colors.secondary }}>
+              Recent
+              <Ionicons name='caret-down' size={13} color={colors.graydark} />
+            </SmallText>
+          </TransactionRow>
+          <TransactionList
+            data={props.data}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 25,
+            }}
+            keyExtractor={({ id }: any) => id.toString()}
+            // renderItem={}
+          />
+        </TransactionSectionBackground>
+      );
+    };
+
+    export default TransactionSection;
+    ```
+
+- On `/screens/Home.tsx`
+
+  - ```tsx
+    ...
+    import TransactionSection from '../components/Transactions/TransactionSection';
+
+    ...
+    return (
+      <HomeContainer>
+        <StatusBar style="dark"/>
+        <CardSection data={cardsData} />
+        <TransactionSection data={transactionData}/>
+      </HomeContainer>
+    );
+    ...
+    ```
+
+- Create `/components/Transactions/TransactionItem.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+
+    // colors
+    import { colors } from '../colors';
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+
+    const TransactionRow = styled.View`
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 25px;
+    `;
+
+    const LeftView = styled.View`
+      flex-direction: row;
+      justify-content: flex-start;
+      height: 100%;
+      align-items: center;
+      flex: 2;
+    `;
+
+    const RightView = styled.View`
+      flex: 1;
+    `;
+
+    // types
+    import { TransactionProps } from './types';
+
+    const TransactionItem: FunctionComponent<TransactionProps> = (props) => {
+      return (
+        <TransactionRow>
+          <LeftView></LeftView>
+          <RightView></RightView>
+        </TransactionRow>
+      );
+    };
+
+    export default TransactionItem;
+    ```
+
+- Create `/components/Transactions/TransactionAvi.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+
+    // icons
+    import { Ionicons } from '@expo/vector-icons';
+
+    // custom components
+    import { colors } from '../colors';
+
+    const StyledView = styled.View`
+      height: 45px;
+      width: 45px;
+      border-radius: 10px;
+      justify-content: center;
+      align-items: center;
+    `;
+
+    // typs
+    import { TransactionAviProps } from './types';
+
+    const TransactionAvi: FunctionComponent<TransactionAviProps> = (props) => {
+      return (
+        <StyledView style={{ backgroundColor: props.background }}>
+          <Ionicons name={props.icon} size={25} color={colors.white} />
+        </StyledView>
+      );
+    };
+
+    export default TransactionAvi;
+    ```
+
+- On `/components/Transactions/TransactionItems.tsx`
+
+  - ```tsx
+    ...
+    import {View} from 'react-native';
+    import TransactionAvi from './TransactionAvi';
+    ...
+      return (
+        <TransactionRow>
+          <LeftView>
+            <TransactionAvi
+              background={props.art.background}
+              icon={props.art.icon}
+            />
+            <View style={{marginLeft: 10}}>
+              <RegularText
+                textStyles={{
+                  color: colors.secondary,
+                  textAlign: 'left',
+                  marginBottom: 5,
+                }}
+              >
+                {props.title}
+              </RegularText>
+              <SmallText
+                textStyles={{
+                  color: colors.graydark,
+                }}
+              >
+                {props.subtitle}
+              </SmallText>
+            </View>
+          </LeftView>
+          <RightView>
+            <RegularText
+              textStyles={{
+                color: colors.secondary,
+                textAlign: 'right',
+                marginBottom: 5,
+              }}
+            >
+              {props.amount}
+            </RegularText>
+            <SmallText
+              textStyles={{
+                color: colors.graydark,
+                textAlign: 'right',
+              }}
+            >
+              {props.date}
+            </SmallText>
+          </RightView>
+        </TransactionRow>
+      );
+    ```
+
+- On `/components/Transactions/TransactionSection.tsx`
+
+  - ```tsx
+    ...
+    import TransactionItem from './TransactionItem';
+    ...
+            renderItem={({item}: any) => <TransactionItem {...item}/>}
+            ...
     ```
