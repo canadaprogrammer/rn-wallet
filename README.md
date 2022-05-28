@@ -1204,3 +1204,240 @@
             renderItem={({item}: any) => <TransactionItem {...item}/>}
             ...
     ```
+
+## Send Money Bottom Sheet
+
+- Create `/components/SendMoney/types.tsx`
+
+  - ```tsx
+    import { ImageSourcePropType } from 'react-native';
+
+    export interface SendMoneyProps {
+      id: number;
+      name: string;
+      amount: string;
+      background: string;
+      img: ImageSourcePropType;
+    }
+
+    export interface SendMoneySectionProps {
+      data: Array<SendMoneyProps>;
+    }
+    ```
+
+- ```bash
+  yarn add reanimated-bottom-sheet
+  yarn add react-native-reanimated react-native-gesture-handler
+  ```
+
+- Modify `/babel.config.js`
+
+  - ```js
+    ...
+    presets: ['babel-preset-expo', 'module:metro-react-native-babel-preset'],
+    plugins: ['react-native-reanimated/plugin'],
+    ...
+    ```
+
+- On `/screens/Home.tsx`
+
+  - ```tsx
+    ...
+    import SendMoneySection from '../components/SendMoney/SendMoneySection';
+    ...
+    import cody from '../assets/avi/cody.png';
+    import harleen from '../assets/avi/harleen.png';
+    import james from '../assets/avi/james.jpg';
+    ...
+    const sendMoneyData = [
+      {
+        id: 1,
+        amount: "2450.50",
+        name: "Cody Andoh",
+        background: colors.tertiary,
+        img: cody,
+      },
+      {
+        id: 2,
+        amount: "2250.55",
+        name: "Harleen Scot",
+        background: colors.primary,
+        img: harleen,
+      },
+      {
+        id: 3,
+        amount: "6250.40",
+        name: "James Corbyn",
+        background: colors.accent,
+        img: james
+      },
+    ];
+
+    return (
+      <HomeContainer>
+        ...
+        <SendMoneySection data={sendMoneyData} />
+      </HomeContainer>
+    ```
+
+- Create `/components/SendMoney/SendMoneySection.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent, useRef } from 'react';
+    import styled from 'styled-components/native';
+    import BottomSheet from 'reanimated-bottom-sheet';
+
+    // components
+    import { colors } from '../colors';
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+
+    const SendMoneySectionBackground = styled.View`
+      width: 100%;
+      padding-top: 15px;
+      background-color: ${colors.white};
+    `;
+
+    const SendMoneyRow = styled.View`
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding-horizontal: 25px;
+    `;
+
+    const SendMoneyList = styled.FlatList`
+      width: 100%;
+      flex: auto;
+      min-height: 80%;
+      padding-horizontal: 25px;
+    `;
+
+    const TextButton = styled.TouchableOpacity``;
+
+    // types
+    import { SendMoneySectionProps } from './types';
+
+    const SendMoneySection: FunctionComponent<SendMoneySectionProps> = (
+      props
+    ) => {
+      const sheetRef = useRef<BottomSheet>(null);
+
+      const renderContent = () => {
+        return (
+          <SendMoneySectionBackground>
+            <SendMoneyRow style={{ marginBottom: 25 }}>
+              <RegularText
+                textStyles={{ fontSize: 19, color: colors.secondary }}
+              >
+                Send Money to
+              </RegularText>
+              <TextButton onPress={() => alert('Add')}>
+                <SmallText
+                  textStyles={{ fontWeight: 'bold', color: colors.tertiary }}
+                >
+                  +Add
+                </SmallText>
+              </TextButton>
+            </SendMoneyRow>
+            <SendMoneyList
+              data={props.data}
+              contentContainerStyle={{
+                alignItems: 'flex-start',
+              }}
+              horizontal={false}
+              showsVerticalScrollIndicator={false}
+              numColumns={3}
+              keyExtractor={({ id }: any) => id.toString()}
+              // renderItem={}
+            />
+          </SendMoneySectionBackground>
+        );
+      };
+      return (
+        <BottomSheet
+          ref={sheetRef}
+          snapPoints={[240, 85]}
+          borderRadius={25}
+          initialSnap={1}
+          enabledContentTapInteraction={false}
+          renderContent={renderContent}
+        />
+      );
+    };
+
+    export default SendMoneySection;
+    ```
+
+- Create `components/SendMoney/SendMoneyItem.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+
+    // colors
+    import { colors } from '../colors';
+
+    // components
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+    import Profile from '../Header/Profile';
+    import { ScreenWidth } from '../shared';
+
+    const SendMoneyItemContainer = styled.TouchableHighlight`
+      height: 130px;
+      width: ${ScreenWidth * 0.27}px;
+      padding: 10px;
+      border-radius: 15px;
+      justify-content: space-around;
+      margin: 0px 10px 10px 0px;
+    `;
+
+    // types
+    import { SendMoneyProps } from './types';
+
+    const SendMoneyItem: FunctionComponent<SendMoneyProps> = (props) => {
+      return (
+        <SendMoneyItemContainer
+          underlayColor={colors.secondary}
+          style={{ backgroundColor: props.background }}
+          onPress={() => {
+            alert('Send Money!');
+          }}
+        >
+          <>
+            <Profile img={props.img} imgContainerStyle={{ marginBottom: 10 }} />
+            <SmallText
+              textStyles={{
+                textAlign: 'left',
+                color: colors.white,
+                fontSize: 12,
+              }}
+            >
+              {props.name}
+            </SmallText>
+            <RegularText
+              textStyles={{
+                color: colors.white,
+                textAlign: 'left',
+                fontSize: 13,
+              }}
+            >
+              {props.amount}
+            </RegularText>
+          </>
+        </SendMoneyItemContainer>
+      );
+    };
+
+    export default SendMoneyItem;
+    ```
+
+- On `/components/SendMoney/SendMoneySection.tsx`
+
+  - ```tsx
+    ...
+    import SendMoneyItem from './SendMoneyItem';
+    ...
+            renderItem={({item}: any) => <SendMoneyItem {...item} />}
+    ```
