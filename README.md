@@ -1441,3 +1441,313 @@
     ...
             renderItem={({item}: any) => <SendMoneyItem {...item} />}
     ```
+
+## Balance Screen
+
+- Create `/screens/Balance.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import { StatusBar } from 'expo-status-bar';
+    import styled from 'styled-components/native';
+
+    // custom components
+    import { colors } from '../components/colors';
+    import { Container } from '../components/shared';
+
+    const BalanceContainer = styled(Container)`
+      background-color: ${colors.graylight};
+      width: 100%;
+      padding: 25px;
+      flex: 1;
+    `;
+
+    // types
+    import { RootStackParamList } from '../navigators/RootStack';
+    import { StackScreenProps } from '@react-navigation/stack';
+    type Props = StackScreenProps<RootStackParamList, 'Balance'>;
+
+    const Balance: FunctionComponent<Props> = ({ route }) => {
+      return (
+        <BalanceContainer>
+          <StatusBar style='dark' />
+        </BalanceContainer>
+      );
+    };
+
+    export default Balance;
+    ```
+
+- On `/navigators/RootStack.tsx`
+
+  - ```tsx
+    ...
+    import Balance from './../screens/Balance';
+
+    // for balance screen
+    import {CardProps} from '../components/Cards/types';
+
+    // balance back icon
+    import {Ionicons} from '@expo/vector-icons';
+
+    export type RootStackParamList = {
+      ...
+      Balance: CardProps;
+    };
+
+    ...
+      return <NavigationContainer>
+        <Stack.Navigator
+          ...
+          initialRouteName="Balance"
+        >
+          ...
+          <Stack.Screen
+            name="Balance"
+            component={Balance}
+            options={({route}) => ({
+              headerTitle: route?.params?.alias,
+              headerTitleAlign: "center",
+              headerBackImage: (props) => (
+                <Ionicons
+                  {...props}
+                  name="chevron-back"
+                  size={25}
+                  color={colors.secondary}
+                />
+              ),
+              headerLeftContainerStyle: {
+                paddingLeft: 0,
+              },
+            })}
+          />
+        </Stack.Navigator>
+        ...
+    ```
+
+- Create `/components/Balance/types.tsx`
+
+  - ```tsx
+    import { CardProps } from './../Cards/types';
+
+    export interface AmountProps {
+      balance: number;
+    }
+
+    export interface BalanceCardProps extends CardProps {}
+    ```
+
+- Create `/components/Balance/AmountSection.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+
+    // custom components
+    import { colors } from '../colors';
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+
+    const AmountSectionBackground = styled.View`
+      width: 100%;
+      padding-top: 5px;
+      align-items: center;
+      flex: 1;
+    `;
+
+    // types
+    import { AmountProps } from './types';
+
+    const AmountSection: FunctionComponent<AmountProps> = (props) => {
+      return (
+        <AmountSectionBackground>
+          <SmallText textStyles={{ color: colors.secondary, marginBottom: 15 }}>
+            Total Balance
+          </SmallText>
+          <RegularText textStyles={{ color: colors.secondary, fontSize: 20 }}>
+            ${props.balance}
+          </RegularText>
+        </AmountSectionBackground>
+      );
+    };
+
+    export default AmountSection;
+    ```
+
+- On `/screens/Balance.tsx`
+
+  - ```tsx
+    ...
+    import AmountSection from '../components/Balance/AmountSection';
+    ...
+          <AmountSection balance={route?.params?.balance}/>
+        </BalanceContainer>
+        ...
+    ```
+
+- Create `/components/Balance/BalanceCardSection.tsx`
+
+  - ```tsx
+    import React, {FunctionComponent} from 'react';
+    import styled from 'styled-components/native';
+
+    const BalanceCardSectionBackground = styled.View`
+      width: 100%;
+      align-items: center;
+      flex: 2;
+    `;
+
+    // types
+    import {BalanceCardProps} from './types';
+
+    const BalanceCardSection: FunctionComponent<BalanceCardProps> = (props) => {
+      return (
+
+      );
+    };
+
+    export default BalanceCardSection;
+    ```
+
+- Create `/components/Balance/BalanceCard.tsx`. It's similar with `/components/Cards/CardItem.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+    import { View } from 'react-native';
+
+    // components
+    import { colors } from '../colors';
+    import RegularText from '../Texts/RegularText';
+    import SmallText from '../Texts/SmallText';
+
+    const CardBackground = styled.ImageBackground`
+      height: 75%;
+      width: 100%;
+      resize-mode: cover;
+      background-color: ${colors.accent};
+      border-radius: 25px;
+      overflow: hidden;
+    `;
+
+    const TouchableView = styled.View`
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      flex: 1;
+    `;
+
+    const CardRow = styled.View`
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    `;
+
+    const Logo = styled.Image`
+      width: 100%;
+      height: 80%;
+      resize-mode: contain;
+      flex: 1;
+    `;
+
+    // images
+    import card_bg from '../../assets/bgs/background_transparent.png';
+
+    // types
+    import { BalanceCardProps } from './types';
+
+    const BalanceCard: FunctionComponent<BalanceCardProps> = (props) => {
+      return (
+        <CardBackground source={card_bg}>
+          <TouchableView>
+            <CardRow>
+              <RegularText textStyles={{ color: colors.white }}>
+                ****** {props?.accountNo?.slice(6, 10)}
+              </RegularText>
+            </CardRow>
+            <CardRow>
+              <View style={{ flex: 3 }}>
+                <SmallText
+                  textStyles={{ marginBottom: 1, color: colors.graydark }}
+                >
+                  Total Balance
+                </SmallText>
+                <RegularText
+                  textStyles={{ fontSize: 19, color: colors.graydark }}
+                >
+                  ${props?.balance?.toFixed(2)}
+                </RegularText>
+              </View>
+              <Logo source={props.logo} />
+            </CardRow>
+          </TouchableView>
+        </CardBackground>
+      );
+    };
+
+    export default BalanceCard;
+    ```
+
+- On `/components/Balance/BalanceCardSection.tsx`
+
+  - ```tsx
+    ...
+    // components
+    import BalanceCard from './BalanceCard';
+    ...
+      <BalanceCardSectionBackground>
+        <BalanceCard {...props} />
+        ...
+    ```
+
+- On `/screens/Balance.tsx`
+
+  - ```tsx
+    ...
+    import BalanceCardSection from '../components/Balance/BalanceCardSection';
+    ...
+          <BalanceCardSection {...route?.params} />
+          ...
+    ```
+
+- Create `/components/Balance/ButtonSection.tsx`
+
+  - ```tsx
+    import React, { FunctionComponent } from 'react';
+    import styled from 'styled-components/native';
+
+    // custom components
+    import RegularButton from '../Buttons/RegularButton';
+    import { colors } from '../colors';
+    import { Ionicons } from '@expo/vector-icons';
+
+    const ButtonSectionBackground = styled.View`
+      width: 100%;
+      align-items: center;
+      flex: 1;
+    `;
+
+    const ButtonSection: FunctionComponent = () => {
+      return (
+        <ButtonSectionBackground>
+          <RegularButton btnStyles={{ width: '50%' }} onPress={() => {}}>
+            Cancel <Ionicons size={17} name='card' color={colors.white} />
+          </RegularButton>
+        </ButtonSectionBackground>
+      );
+    };
+
+    export default ButtonSection;
+    ```
+
+- On `screens/Balance.tsx`
+
+  - ```tsx
+    ...
+    import ButtonSection from '../components/Balance/ButtonSection';
+    ...
+          <ButtonSection />
+        </BalanceContainer>
+        ...
+    ```
