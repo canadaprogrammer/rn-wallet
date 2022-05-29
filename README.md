@@ -1751,3 +1751,52 @@
         </BalanceContainer>
         ...
     ```
+
+## Finalize Navigation Setup
+
+- On `/navigators/RootStack.tsx`
+
+  - `initialRouteName="Welcome"`
+
+- On `/screens/Welcome.tsx`, , and `/screens/Balance.tsx`
+
+  - ```tsx
+    ...
+    // types
+    import {RootStackParamList} from '../navigators/RootStack';
+    import {StackScreenProps} from '@react-navigation/stack';
+    type Props = StackScreenProps<RootStackParamList, 'Welcome'>;
+
+    const Welcome: FunctionComponent<Props> = ({navigation}) => {
+      ...
+              <RegularButton onPress={() => {navigation.navigate("Home")}}>
+              ...
+    ```
+
+- On `/screens/Home.tsx`
+
+  - ```tsx
+    // types
+    import { RootStackParamList } from '../navigators/RootStack';
+    import { StackScreenProps } from '@react-navigation/stack';
+    export type Props = StackScreenProps<RootStackParamList, 'Home'>;
+    ```
+
+- On `/components/Cards/CardItem.tsx`
+
+  - ```tsx
+    ...
+    // avigation
+    import {useNavigation} from '@react-navigation/native';
+    import {Props as HomeProps} from './../../screens/Home';
+    ...
+    const CardItem: FunctionComponent<CardProps> = (props) => {
+      // configuring navigation
+      const navigation = useNavigation<HomeProps['navigation']>();
+
+      // move to balance page
+      const handlePress = () => {
+        navigation.navigate('Balance', {...props});
+      };
+      ...
+    ```

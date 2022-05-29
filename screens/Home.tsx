@@ -22,7 +22,12 @@ import cody from '../assets/avi/cody.png';
 import harleen from '../assets/avi/harleen.png';
 import james from '../assets/avi/james.jpg';
 
-const Home: FunctionComponent = () => {
+// types
+import {RootStackParamList} from '../navigators/RootStack';
+import {StackScreenProps} from '@react-navigation/stack';
+export type Props = StackScreenProps<RootStackParamList, 'Home'>;
+
+const Home: FunctionComponent<Props> = () => {
   const cardsData = [
     {
       id: 1,
